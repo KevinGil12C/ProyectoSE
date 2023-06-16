@@ -8,16 +8,17 @@ public class Producto {
     // Definimos los atributos del producto
     private int idProducto;
     private String nombre;
+    private int stock;
     private float precio;
 
     public Producto() {
         // Constructor vacío, puede ser útil en ciertos escenarios
     }
 
-    public Producto(int idProducto, String nombre, float precio) {
-        // Constructor con parámetros para establecer los valores iniciales de los atributos
+    public Producto(int idProducto, String nombre, int stock, float precio) {
         this.idProducto = idProducto;
         this.nombre = nombre;
+        this.stock = stock;
         this.precio = precio;
     }
 
@@ -46,9 +47,17 @@ public class Producto {
         this.precio = precio;
     }
 
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
     @Override
     public String toString() {
-        // Método toString que devuelve una representación en cadena del objeto Producto
-        return "Producto{" + "idProducto=" + idProducto + ", nombre=" + nombre + ", precio=" + precio + '}';
+        return "Producto{" + "idProducto=" + idProducto + ", nombre=" + nombre + ", stock=" + stock + ", precio=" + precio + '}';
     }
+
 }
