@@ -48,12 +48,14 @@ public class VistaCliente extends javax.swing.JFrame {
         pro6 = new javax.swing.JButton();
         pro7 = new javax.swing.JButton();
         pro8 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtMensajeCliente = new javax.swing.JTextArea();
         labelFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanel1.add(labelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 200, 120));
+        jPanel1.add(labelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 200, 120));
 
         pro9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/9.png"))); // NOI18N
         pro9.setText("jButton1");
@@ -127,6 +129,15 @@ public class VistaCliente extends javax.swing.JFrame {
             }
         });
         jPanel1.add(pro8, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 380, 150, 150));
+
+        txtMensajeCliente.setColumns(20);
+        txtMensajeCliente.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        txtMensajeCliente.setLineWrap(true);
+        txtMensajeCliente.setRows(5);
+        txtMensajeCliente.setWrapStyleWord(true);
+        jScrollPane1.setViewportView(txtMensajeCliente);
+
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 160, 220, 360));
         jPanel1.add(labelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1044, 560));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -425,6 +436,7 @@ public class VistaCliente extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelFondo;
     private javax.swing.JLabel labelLogo;
     private javax.swing.JButton pro1;
@@ -436,5 +448,6 @@ public class VistaCliente extends javax.swing.JFrame {
     private javax.swing.JButton pro7;
     private javax.swing.JButton pro8;
     private javax.swing.JButton pro9;
+    private javax.swing.JTextArea txtMensajeCliente;
     // End of variables declaration//GEN-END:variables
 }
