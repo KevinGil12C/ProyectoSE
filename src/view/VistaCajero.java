@@ -1,18 +1,19 @@
 package view;
 
+import bo.ProductoBO;
+
 /**
  *
  * @author Kevscl
  */
 public class VistaCajero extends javax.swing.JFrame {
 
-    /**
-     * Creates new form VistaCajero
-     */
+    
     public VistaCajero() {
         initComponents();
         imagenesEscala();
     }
+    
     public void imagenesEscala() {
         EscalarImagen i1 = new EscalarImagen();
         i1.escalar("/images/fondoCajero.jpg", labelFondo);
@@ -32,10 +33,10 @@ public class VistaCajero extends javax.swing.JFrame {
         labelLogo = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        txtMensajeCliente = new javax.swing.JTextArea();
+        txtMensajeCajero = new javax.swing.JTextArea();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tbProducto = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -60,19 +61,19 @@ public class VistaCajero extends javax.swing.JFrame {
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cajero.png"))); // NOI18N
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 30, 100, 100));
 
-        txtMensajeCliente.setColumns(20);
-        txtMensajeCliente.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        txtMensajeCliente.setLineWrap(true);
-        txtMensajeCliente.setRows(5);
-        txtMensajeCliente.setWrapStyleWord(true);
-        jScrollPane1.setViewportView(txtMensajeCliente);
+        txtMensajeCajero.setColumns(20);
+        txtMensajeCajero.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        txtMensajeCajero.setLineWrap(true);
+        txtMensajeCajero.setRows(5);
+        txtMensajeCajero.setWrapStyleWord(true);
+        jScrollPane1.setViewportView(txtMensajeCajero);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 50, 576, 110));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Carro de compras", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12))); // NOI18N
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbProducto.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -80,7 +81,7 @@ public class VistaCajero extends javax.swing.JFrame {
 
             }
         ));
-        jScrollPane2.setViewportView(jTable1);
+        jScrollPane2.setViewportView(tbProducto);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -261,7 +262,6 @@ public class VistaCajero extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
@@ -269,6 +269,7 @@ public class VistaCajero extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField5;
     private javax.swing.JLabel labelFondo;
     private javax.swing.JLabel labelLogo;
-    private javax.swing.JTextArea txtMensajeCliente;
+    private javax.swing.JTable tbProducto;
+    public static javax.swing.JTextArea txtMensajeCajero;
     // End of variables declaration//GEN-END:variables
 }

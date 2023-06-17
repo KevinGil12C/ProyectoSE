@@ -1,17 +1,24 @@
 package view;
 
+import entity.Producto;
+import jade.core.AID;
+import jade.lang.acl.ACLMessage;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import jade.core.AID;
+import jade.core.Agent;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.lang.acl.ACLMessage;
 
 /**
  *
  * @author Kevscl
  */
 public class VistaCliente extends javax.swing.JFrame {
-
+    Producto p;
     /**
      * Creates new form VistaCliente
      */
@@ -70,6 +77,11 @@ public class VistaCliente extends javax.swing.JFrame {
         pro1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 pro1MouseEntered(evt);
+            }
+        });
+        pro1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pro1ActionPerformed(evt);
             }
         });
         jPanel1.add(pro1, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 30, 150, 150));
@@ -399,6 +411,14 @@ public class VistaCliente extends javax.swing.JFrame {
         dialog.setVisible(true);
     }//GEN-LAST:event_pro9MouseEntered
 
+    private void pro1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro1ActionPerformed
+        String nombre = "Playera Tipo Polo Caballero";
+        double precio = 139.99;
+        p = new Producto();
+        p.setIdProducto(1);
+
+    }//GEN-LAST:event_pro1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -448,6 +468,6 @@ public class VistaCliente extends javax.swing.JFrame {
     private javax.swing.JButton pro7;
     private javax.swing.JButton pro8;
     private javax.swing.JButton pro9;
-    private javax.swing.JTextArea txtMensajeCliente;
+    public static javax.swing.JTextArea txtMensajeCliente;
     // End of variables declaration//GEN-END:variables
 }
