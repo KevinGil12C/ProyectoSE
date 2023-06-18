@@ -18,7 +18,9 @@ import jade.lang.acl.ACLMessage;
  * @author Kevscl
  */
 public class VistaCliente extends javax.swing.JFrame {
+
     Producto p;
+
     /**
      * Creates new form VistaCliente
      */
@@ -33,6 +35,10 @@ public class VistaCliente extends javax.swing.JFrame {
         EscalarImagen i1 = new EscalarImagen();
         i1.escalar("/images/fondo.jpg", labelFondo);
         i1.escalar("/images/logo.png", labelLogo);
+    }
+
+    public static void recibirMensajeVendedor(String respuesta) {
+        txtMensajeCliente.setText(respuesta);
     }
 
     /**
@@ -71,6 +77,11 @@ public class VistaCliente extends javax.swing.JFrame {
                 pro9MouseEntered(evt);
             }
         });
+        pro9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pro9ActionPerformed(evt);
+            }
+        });
         jPanel1.add(pro9, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 390, 150, 150));
 
         pro1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/1.png"))); // NOI18N
@@ -92,12 +103,22 @@ public class VistaCliente extends javax.swing.JFrame {
                 pro2MouseEntered(evt);
             }
         });
+        pro2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pro2ActionPerformed(evt);
+            }
+        });
         jPanel1.add(pro2, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 30, 150, 150));
 
         pro3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/3.png"))); // NOI18N
         pro3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 pro3MouseEntered(evt);
+            }
+        });
+        pro3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pro3ActionPerformed(evt);
             }
         });
         jPanel1.add(pro3, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 30, 150, 150));
@@ -108,12 +129,22 @@ public class VistaCliente extends javax.swing.JFrame {
                 pro4MouseEntered(evt);
             }
         });
+        pro4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pro4ActionPerformed(evt);
+            }
+        });
         jPanel1.add(pro4, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 210, 150, 150));
 
         pro5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/5.png"))); // NOI18N
         pro5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 pro5MouseEntered(evt);
+            }
+        });
+        pro5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pro5ActionPerformed(evt);
             }
         });
         jPanel1.add(pro5, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 210, 150, 150));
@@ -124,6 +155,11 @@ public class VistaCliente extends javax.swing.JFrame {
                 pro6MouseEntered(evt);
             }
         });
+        pro6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pro6ActionPerformed(evt);
+            }
+        });
         jPanel1.add(pro6, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 210, 150, 150));
 
         pro7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/7.png"))); // NOI18N
@@ -132,12 +168,22 @@ public class VistaCliente extends javax.swing.JFrame {
                 pro7MouseEntered(evt);
             }
         });
+        pro7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pro7ActionPerformed(evt);
+            }
+        });
         jPanel1.add(pro7, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 380, 150, 150));
 
         pro8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/8.png"))); // NOI18N
         pro8.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 pro8MouseEntered(evt);
+            }
+        });
+        pro8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pro8ActionPerformed(evt);
             }
         });
         jPanel1.add(pro8, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 380, 150, 150));
@@ -412,12 +458,50 @@ public class VistaCliente extends javax.swing.JFrame {
     }//GEN-LAST:event_pro9MouseEntered
 
     private void pro1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro1ActionPerformed
-        String nombre = "Playera Tipo Polo Caballero";
-        double precio = 139.99;
-        p = new Producto();
-        p.setIdProducto(1);
+        String producto = "Playera Tipo Polo Caballero";
+        VistaVendedor.recibirMensajeCliente(producto);
 
     }//GEN-LAST:event_pro1ActionPerformed
+
+    private void pro2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro2ActionPerformed
+        String producto = "Camisa Lisa Casual Caballero";
+        VistaVendedor.recibirMensajeCliente(producto);
+    }//GEN-LAST:event_pro2ActionPerformed
+
+    private void pro3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro3ActionPerformed
+        String producto = "Playera Bordado HPC Caballero";
+        VistaVendedor.recibirMensajeCliente(producto);
+    }//GEN-LAST:event_pro3ActionPerformed
+
+    private void pro4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro4ActionPerformed
+        String producto = "Playera Estampada Caballero";
+        VistaVendedor.recibirMensajeCliente(producto);
+    }//GEN-LAST:event_pro4ActionPerformed
+
+    private void pro5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro5ActionPerformed
+        String producto = "Traje Corte Inglés Caballero";
+        VistaVendedor.recibirMensajeCliente(producto);
+    }//GEN-LAST:event_pro5ActionPerformed
+
+    private void pro6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro6ActionPerformed
+        String producto = "Jogger Deportivo Caballero";
+        VistaVendedor.recibirMensajeCliente(producto);
+    }//GEN-LAST:event_pro6ActionPerformed
+
+    private void pro7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro7ActionPerformed
+        String producto = "Bermuda Deportiva Caballero";
+        VistaVendedor.recibirMensajeCliente(producto);
+    }//GEN-LAST:event_pro7ActionPerformed
+
+    private void pro8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro8ActionPerformed
+        String producto = "Playera con Flores para dama";
+        VistaVendedor.recibirMensajeCliente(producto);
+    }//GEN-LAST:event_pro8ActionPerformed
+
+    private void pro9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro9ActionPerformed
+        String producto = "Falda Patinadora Dama";
+        VistaVendedor.recibirMensajeCliente(producto);
+    }//GEN-LAST:event_pro9ActionPerformed
 
     /**
      * @param args the command line arguments

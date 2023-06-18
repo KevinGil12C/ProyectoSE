@@ -13,11 +13,8 @@ public class AgenteCajero extends Agent{
     public void setup() {
         cajeroView = new VistaCajero();
         cajeroView.setVisible(true);
-    }
-    public void enviarMensaje(){
+        //Implementamos los action
         
     }
-    public void recibirMensaje(){
-        
-    }
+    
 }

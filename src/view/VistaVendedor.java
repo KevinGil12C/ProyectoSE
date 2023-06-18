@@ -1,16 +1,18 @@
 package view;
 
 import bo.ProductoBO;
+import entity.Producto;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Kevscl
  */
 public class VistaVendedor extends javax.swing.JFrame {
-
-    
     ProductoBO pbo = new ProductoBO();
-
+    
     /**
      * Creates new form VistaVendedor
      */
@@ -30,13 +32,14 @@ public class VistaVendedor extends javax.swing.JFrame {
         img.escalar("/images/logo.png", labelLogo);
     }
 
-    public void enviarMensaje(){
-        
-    }
     
-    public void recibirMensajeCliente(String producto){
-        
+    
+    public static void recibirMensajeCliente(String producto) {
+        txtMensajeVendedor.setText("Agente Cliente ha seleccionado " + producto);
+        txtBusqueda.setText(producto);
+        System.out.println("Agente Cliente ha seleccionado " + producto);
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -61,7 +64,8 @@ public class VistaVendedor extends javax.swing.JFrame {
         txtStock = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         spinner = new javax.swing.JSpinner();
-        jButton1 = new javax.swing.JButton();
+        btnResponder = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         labelFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -141,12 +145,28 @@ public class VistaVendedor extends javax.swing.JFrame {
         });
         jPanel3.add(spinner, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 180, 140, -1));
 
-        jButton1.setBackground(new java.awt.Color(0, 51, 255));
-        jButton1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/agregar.png"))); // NOI18N
-        jButton1.setText("Agregar");
-        jPanel3.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 260, 130, 40));
+        btnResponder.setBackground(new java.awt.Color(102, 204, 0));
+        btnResponder.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        btnResponder.setForeground(new java.awt.Color(255, 255, 255));
+        btnResponder.setText("Responder");
+        btnResponder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResponderActionPerformed(evt);
+            }
+        });
+        jPanel3.add(btnResponder, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 220, 130, 40));
+
+        jButton2.setBackground(new java.awt.Color(0, 51, 255));
+        jButton2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/agregar.png"))); // NOI18N
+        jButton2.setText("Agregar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jPanel3.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 280, 130, 40));
 
         jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 190, 230, 340));
         jPanel1.add(labelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1010, 550));
@@ -191,6 +211,45 @@ public class VistaVendedor extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_spinnerStateChanged
 
+    private void btnResponderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResponderActionPerformed
+        int selectedRow = tbProducto.getSelectedRow();
+        if (selectedRow != -1) { // Se verifica si se seleccionó alguna fila
+            String pro = tbProducto.getValueAt(selectedRow, 1).toString();
+            int stock = Integer.parseInt(txtStock.getText());
+            String respuesta = "";
+            if (stock > 0) {
+                respuesta = "Agente Vendedor: " + pro + " esta disponible";
+                System.out.println(respuesta);
+                VistaCliente.recibirMensajeVendedor(respuesta);
+            } else {
+                respuesta = "Agente Vendedor: " + pro + " no esta disponible";
+                System.out.println(respuesta);
+                VistaCliente.recibirMensajeVendedor(respuesta);
+            }
+        }
+    }//GEN-LAST:event_btnResponderActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        int selectedRow = tbProducto.getSelectedRow();
+        if (selectedRow != -1) { // Se verifica si se seleccionó alguna fila
+            int id = Integer.parseInt(tbProducto.getValueAt(selectedRow, 0).toString());
+            String pro = tbProducto.getValueAt(selectedRow, 1).toString();
+            int stock = Integer.parseInt(tbProducto.getValueAt(selectedRow, 2).toString());
+            float pUni = Float.parseFloat(tbProducto.getValueAt(selectedRow, 3).toString());
+            int cant = (int) spinner.getValue();
+            String respuesta = "";
+            if (stock > 0) {
+                respuesta = "Agente Vendedor: " + pro + " agregado al carro de compra";
+                System.out.println(respuesta);
+                //VistaCajero.recibirMensajeVendedor(respuesta, id, pro, pUni, cant);
+            } else {
+                respuesta = "Agente Vendedor: " + pro + " no esta disponible";
+                System.out.println(respuesta);
+                VistaCliente.recibirMensajeVendedor(respuesta);
+            }
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -227,7 +286,8 @@ public class VistaVendedor extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnResponder;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

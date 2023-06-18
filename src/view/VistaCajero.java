@@ -1,24 +1,76 @@
 package view;
 
 import bo.ProductoBO;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Kevscl
  */
 public class VistaCajero extends javax.swing.JFrame {
-
     
+    static int cont = 1;
+    static float sumIva = 0, sumTotal = 0, sumSubTotal = 0;
+
     public VistaCajero() {
         initComponents();
         imagenesEscala();
     }
-    
+
     public void imagenesEscala() {
         EscalarImagen i1 = new EscalarImagen();
         i1.escalar("/images/fondoCajero.jpg", labelFondo);
         i1.escalar("/images/logo.png", labelLogo);
     }
+
+    public void recibirMensajeVendedor(String respuesta, int idP, String nom, float precio, int cant) {
+        txtMensajeCajero.setText(respuesta);
+        tabla(idP, nom, precio, cant);
+    }
+    public void tabla(int idP, String nom, float precio, int cant){
+        DecimalFormat df = new DecimalFormat("#.00");
+
+        //Definimos los datos de la tabla
+        DefaultTableModel modelo = (DefaultTableModel) tbVenta.getModel();
+        String nombre = nom;
+        int id = idP;
+        int cantidad = cant;
+        float pUni = precio;
+        float pSubtotal = (float) (cantidad * pUni);
+        sumSubTotal = sumSubTotal + pSubtotal;
+        float pIva = (float) (pSubtotal * .16);
+        sumIva = sumIva + pIva;
+        float pTotal = (float) (pSubtotal + pIva);
+        sumTotal = sumTotal + pTotal;
+
+        //txtSubtotal.setText(df.format(sumSubTotal) + "");
+        //txtIva.setText(df.format(sumIva) + "");
+        //txtTotal.setText(df.format(sumTotal) + "");
+
+        //Ahora para la tabla
+        ArrayList lista = new ArrayList();
+        lista.add(cont);
+        lista.add(id);
+        lista.add(nombre);
+        lista.add(cantidad);
+        lista.add(df.format(pUni));
+        lista.add(df.format(pTotal));
+
+        Object[] obj = new Object[7];
+        obj[0] = lista.get(0);
+        obj[1] = lista.get(1);
+        obj[2] = lista.get(2);
+        obj[3] = lista.get(3);
+        obj[4] = lista.get(4);
+        obj[5] = lista.get(5);
+
+        modelo.addRow(obj);
+        tbVenta.setModel(modelo);
+        cont++;
+    }
+ 
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -36,14 +88,14 @@ public class VistaCajero extends javax.swing.JFrame {
         txtMensajeCajero = new javax.swing.JTextArea();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tbProducto = new javax.swing.JTable();
+        tbVenta = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtSubtotal = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtIva = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        txtTotal = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jTextField4 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
@@ -73,7 +125,7 @@ public class VistaCajero extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Carro de compras", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12))); // NOI18N
 
-        tbProducto.setModel(new javax.swing.table.DefaultTableModel(
+        tbVenta.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -81,7 +133,7 @@ public class VistaCajero extends javax.swing.JFrame {
 
             }
         ));
-        jScrollPane2.setViewportView(tbProducto);
+        jScrollPane2.setViewportView(tbVenta);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -108,17 +160,17 @@ public class VistaCajero extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel2.setText("Subtotal:");
 
-        jTextField1.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        txtSubtotal.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
         jLabel3.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel3.setText("IVA 16%:");
 
-        jTextField2.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        txtIva.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel4.setText("Total:");
 
-        jTextField3.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        txtTotal.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
         jLabel5.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel5.setText("Importe:");
@@ -155,15 +207,15 @@ public class VistaCajero extends javax.swing.JFrame {
                         .addGroup(jPanel3Layout.createSequentialGroup()
                             .addComponent(jLabel4)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                             .addComponent(jLabel3)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtIva, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                             .addComponent(jLabel2)
                             .addGap(18, 18, 18)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(27, 27, 27)
                         .addComponent(jButton1)))
@@ -175,15 +227,15 @@ public class VistaCajero extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtIva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
@@ -262,14 +314,14 @@ public class VistaCajero extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JLabel labelFondo;
     private javax.swing.JLabel labelLogo;
-    private javax.swing.JTable tbProducto;
+    public static javax.swing.JTable tbVenta;
+    private javax.swing.JTextField txtIva;
     public static javax.swing.JTextArea txtMensajeCajero;
+    private javax.swing.JTextField txtSubtotal;
+    private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 }

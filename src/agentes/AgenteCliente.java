@@ -20,15 +20,6 @@ public class AgenteCliente extends Agent {
         clienteView.setVisible(true);
     }
 
-    /*
-    * Envia y recibe mensaje
-     */
-    public void recibirMensaje() {
-
-    }
-
-    public void enviarMensaje() {
-  
-    }
+    
 
 }

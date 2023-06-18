@@ -19,7 +19,7 @@ public class Conexion {
             conn = DriverManager.getConnection(url);
 
             if (conn != null) {
-                System.out.println("Conexión exitosa");
+                //System.out.println("Conexión exitosa");
             } else {
                 //System.out.println("No se pudo conectar a la base de datos");
             }
