@@ -1,8 +1,29 @@
 package view;
 
 import bo.ProductoBO;
+import bo.VentaBO;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import entity.DetalleVenta;
+import entity.Venta;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -11,15 +32,24 @@ import javax.swing.table.DefaultTableModel;
  */
 public class VistaCajero extends javax.swing.JFrame {
 
+    Venta v = new Venta();
+    DetalleVenta dv = new DetalleVenta();
+    VentaBO vdao = new VentaBO();
     static int cont = 1;
     static float sumIva = 0, sumTotal = 0, sumSubTotal = 0;
     private static DefaultTableModel modelo = new DefaultTableModel();
-    
 
     public VistaCajero() {
+
         initComponents();
         imagenesEscala();
-        
+        btnVenta.setVisible(false);
+        idMax();
+    }
+
+    public void idMax() {
+        String id = vdao.getMaxID();
+        txtIdVenta.setText(id);
     }
 
     public void imagenesEscala() {
@@ -35,6 +65,7 @@ public class VistaCajero extends javax.swing.JFrame {
         private int cantidad;
         private float precioUnitario;
         private float precioTotal;
+        private static JTextField txtSubTotal;
 
         // Constructor
         public ItemVenta(int id, String nombre, int cantidad, float precioUnitario, float precioTotal) {
@@ -133,9 +164,9 @@ public class VistaCajero extends javax.swing.JFrame {
         cont++;
 
         // Actualizamos los totales en la interfaz (si es necesario)
-        //txtSubTotal.setText(df.format(sumSubTotal));
-        // txtIVA.setText(df.format(sumIva));
-        // txtTotal.setText(df.format(sumTotal));
+        txtSubTotal.setText(df.format(sumSubTotal));
+        txtIVA.setText(df.format(sumIva));
+        txtTotal.setText(df.format(sumTotal));
     }
 
     /**
@@ -157,16 +188,18 @@ public class VistaCajero extends javax.swing.JFrame {
         tbVenta = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        txtSubtotal = new javax.swing.JTextField();
+        txtSubTotal = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        txtIva = new javax.swing.JTextField();
+        txtIVA = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtTotal = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txtImporte = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        txtCambio = new javax.swing.JTextField();
+        btnVenta = new javax.swing.JButton();
+        txtIdVenta = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
         labelFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -241,33 +274,47 @@ public class VistaCajero extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel2.setText("Subtotal:");
 
-        txtSubtotal.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        txtSubTotal.setEditable(false);
+        txtSubTotal.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
         jLabel3.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel3.setText("IVA 16%:");
 
-        txtIva.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        txtIVA.setEditable(false);
+        txtIVA.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel4.setText("Total:");
 
+        txtTotal.setEditable(false);
         txtTotal.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
         jLabel5.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel5.setText("Importe:");
 
-        jTextField4.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        txtImporte.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        txtImporte.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtImporteKeyReleased(evt);
+            }
+        });
 
         jLabel6.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel6.setText("Cambio:");
 
-        jTextField5.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        txtCambio.setEditable(false);
+        txtCambio.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
-        jButton1.setBackground(new java.awt.Color(0, 0, 255));
-        jButton1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/vender.png"))); // NOI18N
-        jButton1.setText("Generar Venta");
+        btnVenta.setBackground(new java.awt.Color(0, 0, 255));
+        btnVenta.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        btnVenta.setForeground(new java.awt.Color(255, 255, 255));
+        btnVenta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/vender.png"))); // NOI18N
+        btnVenta.setText("Generar Venta");
+        btnVenta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVentaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -280,11 +327,11 @@ public class VistaCajero extends javax.swing.JFrame {
                         .addGroup(jPanel3Layout.createSequentialGroup()
                             .addComponent(jLabel6)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtCambio, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel3Layout.createSequentialGroup()
                             .addComponent(jLabel5)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtImporte, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel3Layout.createSequentialGroup()
                             .addComponent(jLabel4)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -292,14 +339,14 @@ public class VistaCajero extends javax.swing.JFrame {
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                             .addComponent(jLabel3)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtIva, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtIVA, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                             .addComponent(jLabel2)
                             .addGap(18, 18, 18)
-                            .addComponent(txtSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtSubTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(27, 27, 27)
-                        .addComponent(jButton1)))
+                        .addComponent(btnVenta)))
                 .addGap(41, 41, 41))
         );
         jPanel3Layout.setVerticalGroup(
@@ -308,29 +355,38 @@ public class VistaCajero extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(txtSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtSubTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(txtIva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtIVA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtImporte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCambio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(24, 24, 24))
         );
 
         jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 200, 310, 310));
+
+        txtIdVenta.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jPanel1.add(txtIdVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 160, 80, -1));
+
+        jLabel7.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLabel7.setText("Fact:");
+        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 160, -1, -1));
+
+        labelFondo.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jPanel1.add(labelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1010, 540));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -346,6 +402,220 @@ public class VistaCajero extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtImporteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyReleased
+        DecimalFormat df = new DecimalFormat("#.00");
+        float total = Float.parseFloat(txtTotal.getText());
+        float importe = Float.parseFloat(txtImporte.getText());
+        float cambio = importe - total;
+        if (importe > total) {
+            txtCambio.setText(df.format(cambio) + "");
+            btnVenta.setVisible(true);
+        } else {
+            txtCambio.setText("");
+            btnVenta.setVisible(false);
+        }
+    }//GEN-LAST:event_txtImporteKeyReleased
+
+    private void btnVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVentaActionPerformed
+        guardaVenta();
+        guardaDetalleVenta();
+        generaPDF();
+        String mensaje = "Agente Cajero: se ha generado la venta (Reporte "+txtIdVenta.getText()+")";
+        VistaCliente.recibirMensajeCajero(mensaje);
+    }//GEN-LAST:event_btnVentaActionPerformed
+    public void generaPDF() {
+        try {
+            FileOutputStream archivo;
+            File file = new File("C://reportes//Reporte " + txtIdVenta.getText() + ".pdf");
+            archivo = new FileOutputStream(file);
+            Document doc = new Document();
+            PdfWriter.getInstance(doc, archivo);
+            doc.open();
+            Image img = Image.getInstance(getClass().getClassLoader().getResource("images/logo.png"));
+
+            Date date = new Date();
+            Paragraph fecha = new Paragraph();
+            Font negrita = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD, BaseColor.BLUE);
+            fecha.add(Chunk.NEWLINE);
+            fecha.add("Factura: " + txtIdVenta.getText() + "\nFecha: " + new SimpleDateFormat("MM/dd/yyyy").format(date) + "\n");
+
+            PdfPTable Encabezado = new PdfPTable(4);
+            Encabezado.setWidthPercentage(100);
+            Encabezado.getDefaultCell().setBorder(0);
+            float[] ComunaEncabezado = new float[]{20f, 30f, 70f, 50f};
+            Encabezado.setWidths(ComunaEncabezado);
+            Encabezado.setHorizontalAlignment(Element.ALIGN_LEFT);
+
+            Encabezado.addCell(img);
+            String name = "SiVenDi";
+            String frase = "Viste con estilo, vive con pasión";
+            String tel = "7221595250";
+            String dir = "EDOMEX";
+            String ra = "Dinamita Store";
+
+            Encabezado.addCell("");
+            Encabezado.addCell(name + "\n" + frase + "\nTel: " + tel + "\nDireccion: " + dir + "\n" + ra);
+            Encabezado.addCell(fecha);
+            doc.add(Encabezado);
+            //Parte 2
+            Paragraph cl = new Paragraph();
+            cl.add(Chunk.NEWLINE);
+            cl.add("Datos del cliente:" + "\n\n");
+            doc.add(cl);
+
+            PdfPTable tablacl = new PdfPTable(4);
+            tablacl.setWidthPercentage(100);
+            tablacl.getDefaultCell().setBorder(0);
+            float[] Comunacl = new float[]{30f, 60f, 15f, 20f};
+            tablacl.setWidths(Comunacl);
+            tablacl.setHorizontalAlignment(Element.ALIGN_LEFT);
+            //Buscamos el cliente
+            PdfPCell cl1 = new PdfPCell(new Phrase("RFC:", negrita));
+            PdfPCell cl2 = new PdfPCell(new Phrase("Nombre: ", negrita));
+            PdfPCell cl3 = new PdfPCell(new Phrase(""));
+            PdfPCell cl4 = new PdfPCell(new Phrase(""));
+
+            cl1.setBorder(0);
+            cl2.setBorder(0);
+            cl3.setBorder(0);
+            cl4.setBorder(0);
+            tablacl.addCell(cl1);
+            tablacl.addCell(cl2);
+            tablacl.addCell(cl3);
+            tablacl.addCell(cl4);
+
+            //Agregamos los get del cliente
+            tablacl.addCell("XAXX010101000");
+            tablacl.addCell("PÚBLICO EN GENERAL");
+            tablacl.addCell("");
+            tablacl.addCell("");
+
+            doc.add(tablacl);
+
+            //Tabla producto
+            Paragraph pro = new Paragraph();
+            pro.add(Chunk.NEWLINE);
+            pro.add("\n\nDetalle venta" + "\n\n");
+            doc.add(pro);
+
+            PdfPTable tablapr = new PdfPTable(4);
+            tablapr.setWidthPercentage(100);
+            tablapr.getDefaultCell().setBorder(0);
+            float[] Comunapr = new float[]{10f, 60f, 15f, 20f};
+            tablapr.setWidths(Comunapr);
+            tablapr.setHorizontalAlignment(Element.ALIGN_LEFT);
+
+            PdfPCell pro1 = new PdfPCell(new Phrase("Cant:"));
+            PdfPCell pro2 = new PdfPCell(new Phrase("Nombre:"));
+            PdfPCell pro3 = new PdfPCell(new Phrase("P/Unitario:"));
+            PdfPCell pro4 = new PdfPCell(new Phrase("P/Total:"));
+
+            pro1.setBorder(0);
+            pro2.setBorder(0);
+            pro3.setBorder(0);
+            pro4.setBorder(0);
+
+            pro1.setBackgroundColor(BaseColor.DARK_GRAY);
+            pro2.setBackgroundColor(BaseColor.DARK_GRAY);
+            pro3.setBackgroundColor(BaseColor.DARK_GRAY);
+            pro4.setBackgroundColor(BaseColor.DARK_GRAY);
+
+            tablapr.addCell(pro1);
+            tablapr.addCell(pro2);
+            tablapr.addCell(pro3);
+            tablapr.addCell(pro4);
+
+            //Agregamos los productos de la venta
+            for (int i = 0; i < tbVenta.getRowCount(); i++) {
+                String cant = tbVenta.getValueAt(i, 3) + "";
+                String nomb = tbVenta.getValueAt(i, 2) + "";
+                String puni = tbVenta.getValueAt(i, 4) + "";
+                String ptot = tbVenta.getValueAt(i, 5) + "";
+                tablapr.addCell(cant);
+                tablapr.addCell(nomb);
+                tablapr.addCell(puni);
+                tablapr.addCell(ptot);
+            }
+            doc.add(tablapr);
+
+            //Parte 3
+            Paragraph info = new Paragraph();
+            info.add(Chunk.NEWLINE);
+            info.add("Subtotal: " + txtSubTotal.getText());
+            info.add("\nIVA 16%: " + txtIVA.getText());
+            info.add("\nTotal: " + txtTotal.getText());
+            info.add("\n\nImporte: " + txtImporte.getText() + "");
+            info.add("\nCambio: " + txtCambio.getText() + "");
+            info.setAlignment(Element.ALIGN_RIGHT);
+            doc.add(info);
+
+            //Parte 4
+            Paragraph firma = new Paragraph();
+            firma.add(Chunk.NEWLINE);
+            firma.add("Firma: \n\n");
+            firma.add("-------------------------");
+            firma.setAlignment(Element.ALIGN_CENTER);
+            doc.add(firma);
+
+            //Parte 5
+            Paragraph mensaje = new Paragraph();
+            mensaje.add(Chunk.NEWLINE);
+            mensaje.add("\n\n Gracias por su Compra");
+            mensaje.setAlignment(Element.ALIGN_CENTER);
+            doc.add(mensaje);
+            //Cierre del pdf
+            doc.close();
+            archivo.close();
+            //limpiarTodo(); // Cambia "limpiarToto()" por "limpiarTodo()"
+            //Desktop.getDesktop().open(file);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+
+    public void guardaVenta() {
+        v = new Venta();
+        // Obtener la fecha actual
+        LocalDate fechaActual = LocalDate.now();
+
+        // Crear un formateador de fecha
+        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+
+        // Formatear la fecha en el formato deseado
+        String fechaFormateada = fechaActual.format(formatoFecha);
+
+        int idVenta = Integer.parseInt(txtIdVenta.getText());
+
+        String mpago = "Efectivo";
+        float total = Float.parseFloat(txtTotal.getText());
+        //Agregamos la venta
+        v.setIdVenta(idVenta);
+        v.setFecha(fechaFormateada);
+        v.setMpago(mpago);
+        v.setTotal(total);
+        String mensaje = vdao.agregarVenta(v);
+        //men.valido(mensaje);
+        //idMax();
+        //guardaDetalleVenta();
+        //generaPDF();
+    }
+
+    public void guardaDetalleVenta() {
+        dv = new DetalleVenta();
+        vdao = new VentaBO();
+        for (int i = 0; i < tbVenta.getRowCount(); i++) {
+            dv.setIdDetalleVenta(Integer.parseInt(tbVenta.getValueAt(i, 0) + ""));
+            dv.setIdProducto(Integer.parseInt(tbVenta.getValueAt(i, 1) + ""));
+            dv.setIdVenta(Integer.parseInt(txtIdVenta.getText()));
+            dv.setCantidad(Integer.parseInt(tbVenta.getValueAt(i, 3) + ""));
+            dv.setpUnitario(Float.parseFloat(tbVenta.getValueAt(i, 4) + ""));
+            dv.setTotal(Float.parseFloat(tbVenta.getValueAt(i, 5) + ""));
+            String mensaje = vdao.agregarDetalleVenta(dv);
+            System.out.println(mensaje);
+        }
+        //generaPDF();
+    }
 
     /**
      * @param args the command line arguments
@@ -383,26 +653,28 @@ public class VistaCajero extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnVenta;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
     private javax.swing.JLabel labelFondo;
     private javax.swing.JLabel labelLogo;
     public static javax.swing.JTable tbVenta;
-    private javax.swing.JTextField txtIva;
+    private static javax.swing.JTextField txtCambio;
+    private static javax.swing.JTextField txtIVA;
+    private javax.swing.JTextField txtIdVenta;
+    private javax.swing.JTextField txtImporte;
     public static javax.swing.JTextArea txtMensajeCajero;
-    private javax.swing.JTextField txtSubtotal;
-    private javax.swing.JTextField txtTotal;
+    private static javax.swing.JTextField txtSubTotal;
+    private static javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 }

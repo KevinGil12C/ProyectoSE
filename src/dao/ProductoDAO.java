@@ -106,7 +106,7 @@ public class ProductoDAO {
                 for (int i = 0; i < 4; i++) {
                     filas[i] = rs.getString(i + 1);
                 }
-                String rutaImagen = "/images/" + contador + ".png";
+                String rutaImagen = "/images/" + filas[0] + ".png";
                 try {
                     Image imagen = ImageIO.read(getClass().getResourceAsStream(rutaImagen));
                     ImageIcon icono = new ImageIcon(imagen);

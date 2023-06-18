@@ -20,6 +20,7 @@ public class VistaVendedor extends javax.swing.JFrame {
         initComponents();
         imagenEscalada();
         listar();
+        btnAgregar.setVisible(false);
     }
 
     public void listar() {
@@ -65,7 +66,7 @@ public class VistaVendedor extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         spinner = new javax.swing.JSpinner();
         btnResponder = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnAgregar = new javax.swing.JButton();
         labelFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -156,17 +157,17 @@ public class VistaVendedor extends javax.swing.JFrame {
         });
         jPanel3.add(btnResponder, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 220, 130, 40));
 
-        jButton2.setBackground(new java.awt.Color(0, 51, 255));
-        jButton2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/agregar.png"))); // NOI18N
-        jButton2.setText("Agregar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnAgregar.setBackground(new java.awt.Color(0, 51, 255));
+        btnAgregar.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        btnAgregar.setForeground(new java.awt.Color(255, 255, 255));
+        btnAgregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/agregar.png"))); // NOI18N
+        btnAgregar.setText("Agregar");
+        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnAgregarActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 280, 130, 40));
+        jPanel3.add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 280, 130, 40));
 
         jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 190, 230, 340));
         jPanel1.add(labelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1010, 550));
@@ -203,11 +204,16 @@ public class VistaVendedor extends javax.swing.JFrame {
         // Verifica si el valor seleccionado está fuera de los límites
         if (selectedValue < 0 || selectedValue > stock) {
             // Establece el valor mínimo o máximo permitido
-            if (selectedValue < 0) {
+            
+            if (selectedValue <= 0) {
                 spinner.setValue(0);
-            } else {
+                btnAgregar.setVisible(false);
+            } else if(selectedValue>stock){
                 spinner.setValue(stock);
+                btnAgregar.setVisible(false);
             }
+        }else if(selectedValue>=1 || selectedValue<=stock){
+            btnAgregar.setVisible(true);
         }
     }//GEN-LAST:event_spinnerStateChanged
 
@@ -229,7 +235,7 @@ public class VistaVendedor extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnResponderActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
         int selectedRow = tbProducto.getSelectedRow();
         if (selectedRow != -1) { // Se verifica si se seleccionó alguna fila
             int id = Integer.parseInt(tbProducto.getValueAt(selectedRow, 0).toString());
@@ -248,7 +254,7 @@ public class VistaVendedor extends javax.swing.JFrame {
                 VistaCliente.recibirMensajeVendedor(respuesta);
             }
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnAgregarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -286,8 +292,8 @@ public class VistaVendedor extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnResponder;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

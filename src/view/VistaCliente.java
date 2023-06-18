@@ -41,6 +41,9 @@ public class VistaCliente extends javax.swing.JFrame {
         txtMensajeCliente.setText(respuesta);
     }
 
+    public static void recibirMensajeCajero(String respuesta){
+        txtMensajeCliente.setText(respuesta);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
