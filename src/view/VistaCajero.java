@@ -10,13 +10,16 @@ import javax.swing.table.DefaultTableModel;
  * @author Kevscl
  */
 public class VistaCajero extends javax.swing.JFrame {
-    
+
     static int cont = 1;
     static float sumIva = 0, sumTotal = 0, sumSubTotal = 0;
+    private static DefaultTableModel modelo = new DefaultTableModel();
+    
 
     public VistaCajero() {
         initComponents();
         imagenesEscala();
+        
     }
 
     public void imagenesEscala() {
@@ -25,52 +28,115 @@ public class VistaCajero extends javax.swing.JFrame {
         i1.escalar("/images/logo.png", labelLogo);
     }
 
-    public void recibirMensajeVendedor(String respuesta, int idP, String nom, float precio, int cant) {
+    public static class ItemVenta {
+
+        private int id;
+        private String nombre;
+        private int cantidad;
+        private float precioUnitario;
+        private float precioTotal;
+
+        // Constructor
+        public ItemVenta(int id, String nombre, int cantidad, float precioUnitario, float precioTotal) {
+            this.id = id;
+            this.nombre = nombre;
+            this.cantidad = cantidad;
+            this.precioUnitario = precioUnitario;
+            this.precioTotal = precioTotal;
+        }
+
+        // Getter para id
+        public int getId() {
+            return id;
+        }
+
+        // Setter para id
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        // Getter para nombre
+        public String getNombre() {
+            return nombre;
+        }
+
+        // Setter para nombre
+        public void setNombre(String nombre) {
+            this.nombre = nombre;
+        }
+
+        // Getter para cantidad
+        public int getCantidad() {
+            return cantidad;
+        }
+
+        // Setter para cantidad
+        public void setCantidad(int cantidad) {
+            this.cantidad = cantidad;
+        }
+
+        // Getter para precioUnitario
+        public float getPrecioUnitario() {
+            return precioUnitario;
+        }
+
+        // Setter para precioUnitario
+        public void setPrecioUnitario(float precioUnitario) {
+            this.precioUnitario = precioUnitario;
+        }
+
+        // Getter para precioTotal
+        public float getPrecioTotal() {
+            return precioTotal;
+        }
+
+        // Setter para precioTotal
+        public void setPrecioTotal(float precioTotal) {
+            this.precioTotal = precioTotal;
+        }
+    }
+
+    public static void recibirMensajeVendedor(String respuesta, int idP, String nom, float precio, int cant) {
         txtMensajeCajero.setText(respuesta);
         tabla(idP, nom, precio, cant);
     }
-    public void tabla(int idP, String nom, float precio, int cant){
-        DecimalFormat df = new DecimalFormat("#.00");
 
-        //Definimos los datos de la tabla
-        DefaultTableModel modelo = (DefaultTableModel) tbVenta.getModel();
+    public static void tabla(int idP, String nom, float precio, int cant) {
+        DecimalFormat df = new DecimalFormat("#.00");
+        modelo = (DefaultTableModel) tbVenta.getModel();
+        // Definimos los datos de la tabla
         String nombre = nom;
         int id = idP;
         int cantidad = cant;
         float pUni = precio;
-        float pSubtotal = (float) (cantidad * pUni);
+        float pSubtotal = cantidad * pUni;
         sumSubTotal = sumSubTotal + pSubtotal;
-        float pIva = (float) (pSubtotal * .16);
+        float pIva = pSubtotal * 0.16f;
         sumIva = sumIva + pIva;
-        float pTotal = (float) (pSubtotal + pIva);
+        float pTotal = pSubtotal + pIva;
         sumTotal = sumTotal + pTotal;
 
-        //txtSubtotal.setText(df.format(sumSubTotal) + "");
-        //txtIva.setText(df.format(sumIva) + "");
-        //txtTotal.setText(df.format(sumTotal) + "");
+        ItemVenta item = new ItemVenta(id, nombre, cantidad, pUni, pTotal);
 
-        //Ahora para la tabla
-        ArrayList lista = new ArrayList();
-        lista.add(cont);
-        lista.add(id);
-        lista.add(nombre);
-        lista.add(cantidad);
-        lista.add(df.format(pUni));
-        lista.add(df.format(pTotal));
+        Object[] obj = new Object[6];
+        obj[0] = cont;
+        obj[1] = item.getId();
+        obj[2] = item.getNombre();
+        obj[3] = item.getCantidad();
+        obj[4] = (item.getPrecioUnitario());
+        obj[5] = (item.getPrecioTotal());
 
-        Object[] obj = new Object[7];
-        obj[0] = lista.get(0);
-        obj[1] = lista.get(1);
-        obj[2] = lista.get(2);
-        obj[3] = lista.get(3);
-        obj[4] = lista.get(4);
-        obj[5] = lista.get(5);
-
+        // Agregamos el objeto a nuestro modelo
         modelo.addRow(obj);
-        tbVenta.setModel(modelo);
+
+        // Aumentamos el contador
         cont++;
+
+        // Actualizamos los totales en la interfaz (si es necesario)
+        //txtSubTotal.setText(df.format(sumSubTotal));
+        // txtIVA.setText(df.format(sumIva));
+        // txtTotal.setText(df.format(sumTotal));
     }
- 
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -130,9 +196,24 @@ public class VistaCajero extends javax.swing.JFrame {
 
             },
             new String [] {
-
+                "Contador", "ID", "Nombre", "Cantidad", "P. Unitario", "P. Total"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Float.class, java.lang.Float.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane2.setViewportView(tbVenta);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);

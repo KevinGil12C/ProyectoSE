@@ -241,7 +241,7 @@ public class VistaVendedor extends javax.swing.JFrame {
             if (stock > 0) {
                 respuesta = "Agente Vendedor: " + pro + " agregado al carro de compra";
                 System.out.println(respuesta);
-                //VistaCajero.recibirMensajeVendedor(respuesta, id, pro, pUni, cant);
+                VistaCajero.recibirMensajeVendedor(respuesta, id, pro, pUni, cant);
             } else {
                 respuesta = "Agente Vendedor: " + pro + " no esta disponible";
                 System.out.println(respuesta);
