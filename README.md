@@ -1,5 +1,3 @@
-El README se ve bastante completo y bien estructurado. Sin embargo, aquí tienes algunas sugerencias para mejorarlo:
-
 ---
 
 # Sistema de ventas con JADE (agentes)
