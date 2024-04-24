@@ -2,8 +2,6 @@ package agentes;
 
 import jade.core.AID;
 import jade.core.Agent;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import view.VistaCliente;
 
@@ -19,7 +17,4 @@ public class AgenteCliente extends Agent {
         clienteView = new VistaCliente();
         clienteView.setVisible(true);
     }
-
-    
-
 }

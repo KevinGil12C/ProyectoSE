@@ -1,30 +1,60 @@
 package view;
 
+import Socket.Cajero;
+import Socket.Cajero1;
+import Socket.Cliente;
+import Socket.Servidor;
+import agentes.AgenteVendedor;
 import bo.ProductoBO;
-import entity.Producto;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import javax.swing.table.DefaultTableModel;
+import java.util.Observable;
+import java.util.Observer;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  *
  * @author Kevscl
  */
-public class VistaVendedor extends javax.swing.JFrame {
+public class VistaVendedor extends javax.swing.JFrame implements Observer {
+
+    public static String hostvendedor = "";
+    private AgenteVendedor agente;
     ProductoBO pbo = new ProductoBO();
-    
+
     /**
      * Creates new form VistaVendedor
      */
     public VistaVendedor() {
         initComponents();
+        ObtenerIP();
+        Servidor s = new Servidor(5050);
+        s.addObserver(this);
+        setTitle("Vista Vendedor");
+        Thread t = new Thread(s);
+        t.start();
         imagenEscalada();
         listar();
         btnAgregar.setVisible(false);
+        this.setLocationRelativeTo(null);
+        this.setResizable(false);
     }
 
     public void listar() {
         pbo.listarProducto(tbProducto);
+    }
+
+    public static void ObtenerIP() {
+        try {
+            // Obtener la dirección IP local
+            InetAddress localhost = InetAddress.getLocalHost();
+            String ipAddress = localhost.getHostAddress();
+
+            System.out.println("Dirección IP: " + ipAddress);
+            TxtIPV.setText(ipAddress);
+            hostvendedor = ipAddress;
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
     public void imagenEscalada() {
@@ -33,12 +63,10 @@ public class VistaVendedor extends javax.swing.JFrame {
         img.escalar("/images/logo.png", labelLogo);
     }
 
-    
-    
     public static void recibirMensajeCliente(String producto) {
-        txtMensajeVendedor.setText("Agente Cliente ha seleccionado " + producto);
-        txtBusqueda.setText(producto);
-        System.out.println("Agente Cliente ha seleccionado " + producto);
+//        txtMensajeVendedor.append("\n" + "Agente Cliente ha seleccionado " + producto);
+//        txtBusqueda.setText(producto);
+//        System.out.println("Agente Cliente ha seleccionado " + producto);
     }
 
     /**
@@ -53,6 +81,7 @@ public class VistaVendedor extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         labelLogo = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        TxtIPV = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtMensajeVendedor = new javax.swing.JTextArea();
         jPanel2 = new javax.swing.JPanel();
@@ -78,6 +107,9 @@ public class VistaVendedor extends javax.swing.JFrame {
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/vendedor.png"))); // NOI18N
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(887, 20, 100, 100));
+
+        TxtIPV.setEditable(false);
+        jPanel1.add(TxtIPV, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 150, 190, -1));
 
         txtMensajeVendedor.setColumns(20);
         txtMensajeVendedor.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
@@ -204,15 +236,15 @@ public class VistaVendedor extends javax.swing.JFrame {
         // Verifica si el valor seleccionado está fuera de los límites
         if (selectedValue < 0 || selectedValue > stock) {
             // Establece el valor mínimo o máximo permitido
-            
+
             if (selectedValue <= 0) {
                 spinner.setValue(0);
                 btnAgregar.setVisible(false);
-            } else if(selectedValue>stock){
+            } else if (selectedValue > stock) {
                 spinner.setValue(stock);
                 btnAgregar.setVisible(false);
             }
-        }else if(selectedValue>=1 || selectedValue<=stock){
+        } else if (selectedValue >= 1 || selectedValue <= stock) {
             btnAgregar.setVisible(true);
         }
     }//GEN-LAST:event_spinnerStateChanged
@@ -226,11 +258,19 @@ public class VistaVendedor extends javax.swing.JFrame {
             if (stock > 0) {
                 respuesta = "Agente Vendedor: " + pro + " esta disponible";
                 System.out.println(respuesta);
-                VistaCliente.recibirMensajeVendedor(respuesta);
+                Cliente c = new Cliente("192.168.1.125", respuesta);
+                Thread t = new Thread(c);
+                t.start();
+                //VistaVendedor.recibirMensajeCliente(producto);
+                //VistaCliente.recibirMensajeVendedor(respuesta);
             } else {
                 respuesta = "Agente Vendedor: " + pro + " no esta disponible";
                 System.out.println(respuesta);
-                VistaCliente.recibirMensajeVendedor(respuesta);
+                Cliente c = new Cliente("192.168.1.125", respuesta);
+                Thread t = new Thread(c);
+                t.start();
+                //VistaVendedor.recibirMensajeCliente(producto);
+                //VistaCliente.recibirMensajeVendedor(respuesta);
             }
         }
     }//GEN-LAST:event_btnResponderActionPerformed
@@ -242,12 +282,17 @@ public class VistaVendedor extends javax.swing.JFrame {
             String pro = tbProducto.getValueAt(selectedRow, 1).toString();
             int stock = Integer.parseInt(tbProducto.getValueAt(selectedRow, 2).toString());
             float pUni = Float.parseFloat(tbProducto.getValueAt(selectedRow, 3).toString());
+            double precio = pUni;
             int cant = (int) spinner.getValue();
             String respuesta = "";
             if (stock > 0) {
-                respuesta = "Agente Vendedor: " + pro + " agregado al carro de compra";
+                //respuesta = "Agente Vendedor: " + pro + " agregado al carro de compra";
+                respuesta = id + "," + pro + "," + precio + "," + cant;
+                Cajero1 c = new Cajero1("192.168.1.127", respuesta);
+                Thread t = new Thread(c);
+                t.start();
                 System.out.println(respuesta);
-                VistaCajero.recibirMensajeVendedor(respuesta, id, pro, pUni, cant);
+                //VistaCajero.recibirMensajeVendedor(respuesta, id, pro, pUni, cant);
             } else {
                 respuesta = "Agente Vendedor: " + pro + " no esta disponible";
                 System.out.println(respuesta);
@@ -292,6 +337,7 @@ public class VistaVendedor extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public static javax.swing.JTextField TxtIPV;
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnResponder;
     private javax.swing.JLabel jLabel1;
@@ -311,4 +357,9 @@ public class VistaVendedor extends javax.swing.JFrame {
     public static javax.swing.JTextArea txtMensajeVendedor;
     private javax.swing.JTextField txtStock;
     // End of variables declaration//GEN-END:variables
+    @Override
+    public void update(Observable o, Object producto) {
+        this.txtMensajeVendedor.append((String) "\n" + "Agente Cliente ha seleccionado " + producto);
+        this.txtBusqueda.setText((String) producto);
+    }
 }

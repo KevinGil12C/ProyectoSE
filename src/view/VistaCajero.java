@@ -1,5 +1,8 @@
 package view;
 
+import Socket.Cajero1;
+import Socket.Cliente;
+import Socket.Servidor;
 import bo.ProductoBO;
 import bo.VentaBO;
 import com.itextpdf.text.BaseColor;
@@ -15,23 +18,33 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import entity.DetalleVenta;
 import entity.Venta;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 
 /**
  *
  * @author Kevscl
  */
-public class VistaCajero extends javax.swing.JFrame {
+public class VistaCajero extends javax.swing.JFrame implements Observer{
 
+    public static String hostcajero = "";
     Venta v = new Venta();
     DetalleVenta dv = new DetalleVenta();
     VentaBO vdao = new VentaBO();
@@ -40,16 +53,36 @@ public class VistaCajero extends javax.swing.JFrame {
     private static DefaultTableModel modelo = new DefaultTableModel();
 
     public VistaCajero() {
-
         initComponents();
+        ObtenerIP();
+        setTitle("Vista Cajero");
+        Servidor s = new Servidor(5050);
+        Thread t = new Thread(s);
+        t.start();
         imagenesEscala();
         btnVenta.setVisible(false);
         idMax();
+        this.setLocationRelativeTo(null);
+        this.setResizable(false);
     }
 
     public void idMax() {
         String id = vdao.getMaxID();
         txtIdVenta.setText(id);
+    }
+    
+    public static void ObtenerIP() {
+        try {
+            // Obtener la dirección IP local
+            InetAddress localhost = InetAddress.getLocalHost();
+            String ipAddress = localhost.getHostAddress();
+
+            System.out.println("Dirección IP: " + ipAddress);
+            TxtIPCaja.setText(ipAddress);
+            hostcajero = ipAddress;
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
     public void imagenesEscala() {
@@ -127,10 +160,10 @@ public class VistaCajero extends javax.swing.JFrame {
         }
     }
 
-    public static void recibirMensajeVendedor(String respuesta, int idP, String nom, float precio, int cant) {
-        txtMensajeCajero.setText(respuesta);
-        tabla(idP, nom, precio, cant);
-    }
+//    public static void recibirMensajeVendedor(String respuesta, int idP, String nom, float precio, int cant) {
+//        //txtMensajeCajero.setText("\n" + respuesta);
+//        tabla(idP, nom, precio, cant);
+//    }
 
     public static void tabla(int idP, String nom, float precio, int cant) {
         DecimalFormat df = new DecimalFormat("#.00");
@@ -179,8 +212,8 @@ public class VistaCajero extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        labelLogo = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        labelLogo = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtMensajeCajero = new javax.swing.JTextArea();
         jPanel2 = new javax.swing.JPanel();
@@ -199,6 +232,7 @@ public class VistaCajero extends javax.swing.JFrame {
         txtCambio = new javax.swing.JTextField();
         btnVenta = new javax.swing.JButton();
         txtIdVenta = new javax.swing.JTextField();
+        TxtIPCaja = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         labelFondo = new javax.swing.JLabel();
 
@@ -206,11 +240,11 @@ public class VistaCajero extends javax.swing.JFrame {
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        labelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/logo.png"))); // NOI18N
-        jPanel1.add(labelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 220, 140));
-
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cajero.png"))); // NOI18N
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 30, 100, 100));
+
+        labelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/logo.png"))); // NOI18N
+        jPanel1.add(labelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 220, 140));
 
         txtMensajeCajero.setColumns(20);
         txtMensajeCajero.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
@@ -219,7 +253,7 @@ public class VistaCajero extends javax.swing.JFrame {
         txtMensajeCajero.setWrapStyleWord(true);
         jScrollPane1.setViewportView(txtMensajeCajero);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 50, 576, 110));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 40, 576, 110));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Carro de compras", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 12))); // NOI18N
@@ -382,12 +416,15 @@ public class VistaCajero extends javax.swing.JFrame {
         txtIdVenta.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jPanel1.add(txtIdVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 160, 80, -1));
 
+        TxtIPCaja.setEditable(false);
+        jPanel1.add(TxtIPCaja, new org.netbeans.lib.awtextra.AbsoluteConstraints(654, 160, 180, -1));
+
         jLabel7.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel7.setText("Fact:");
         jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 160, -1, -1));
 
         labelFondo.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jPanel1.add(labelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1010, 540));
+        jPanel1.add(labelFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 1010, 540));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -420,10 +457,16 @@ public class VistaCajero extends javax.swing.JFrame {
     private void btnVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVentaActionPerformed
         guardaVenta();
         guardaDetalleVenta();
+        
+        String respuesta = "Agente Cajero: se ha generado la venta Factura " + txtIdVenta.getText();
+        Cajero1 c = new Cajero1("192.168.1.125", respuesta);
+        Thread l = new Thread(c);
+        l.start();
         generaPDF();
-        String mensaje = "Agente Cajero: se ha generado la venta (Reporte "+txtIdVenta.getText()+")";
-        VistaCliente.recibirMensajeCajero(mensaje);
+
+        //VistaCliente.recibirMensajeCajero(mensaje);
     }//GEN-LAST:event_btnVentaActionPerformed
+    
     public void generaPDF() {
         try {
             FileOutputStream archivo;
@@ -574,6 +617,19 @@ public class VistaCajero extends javax.swing.JFrame {
         }
     }
 
+    private byte[] getFileBytes(File file) throws IOException {
+        byte[] fileBytes;
+        try (FileInputStream fis = new FileInputStream(file); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            int bytesRead;
+            byte[] buffer = new byte[4096];
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                bos.write(buffer, 0, bytesRead);
+            }
+            fileBytes = bos.toByteArray();
+        }
+        return fileBytes;
+    }
+
     public void guardaVenta() {
         v = new Venta();
         // Obtener la fecha actual
@@ -653,6 +709,7 @@ public class VistaCajero extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public static javax.swing.JTextField TxtIPCaja;
     private javax.swing.JButton btnVenta;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -677,4 +734,22 @@ public class VistaCajero extends javax.swing.JFrame {
     private static javax.swing.JTextField txtSubTotal;
     private static javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void update(Observable o, Object producto) {
+        DecimalFormat df1 = new DecimalFormat("#.00");
+        String mensaje = (String)producto;
+        System.out.println(mensaje);
+        // Dividir el mensaje en partes utilizando la coma como separador
+        String[] partes = mensaje.split(",");
+
+        // Asignar cada parte a sus respectivas variables
+        int id = Integer.parseInt(partes[0]);
+        String pro = partes[1];
+        double pUni = Double.parseDouble(partes[2]);
+        int cant = Integer.parseInt(partes[3]);
+        this.txtMensajeCajero.append((String) "\n" + "Agente Vendedor: " + pro + " agregado al carro de compra");
+        tabla(id, pro, (float) pUni, cant);
+    }
+
 }

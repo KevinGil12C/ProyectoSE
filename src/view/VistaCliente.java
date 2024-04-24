@@ -1,34 +1,50 @@
 package view;
 
+import Socket.Cliente;
+import Socket.Servidor;
+import agentes.AgenteCliente;
 import entity.Producto;
 import jade.core.AID;
-import jade.lang.acl.ACLMessage;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
-import jade.core.AID;
-import jade.core.Agent;
-import jade.core.behaviours.OneShotBehaviour;
-import jade.lang.acl.ACLMessage;
+import static view.VistaVendedor.txtBusqueda;
+import static view.VistaVendedor.txtMensajeVendedor;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  *
  * @author Kevscl
  */
-public class VistaCliente extends javax.swing.JFrame {
+public class VistaCliente extends javax.swing.JFrame implements Observer {
 
+    public static String hostcliente = "";
+    private AgenteCliente agente;
     Producto p;
+    
 
     /**
      * Creates new form VistaCliente
      */
     public VistaCliente() {
         initComponents();
+        ObtenerIP();
+        Servidor s = new Servidor(5050);
+        s.addObserver(this);
+        Thread t = new Thread(s);
+        t.start();
         setTitle("Vista Cliente");
         imagenesEscala();
-
+        this.setLocationRelativeTo(null);
+        this.setResizable(false);
     }
 
     public void imagenesEscala() {
@@ -37,13 +53,28 @@ public class VistaCliente extends javax.swing.JFrame {
         i1.escalar("/images/logo.png", labelLogo);
     }
 
-    public static void recibirMensajeVendedor(String respuesta) {
-        txtMensajeCliente.setText(respuesta);
+    public static void ObtenerIP() {
+        try {
+            // Obtener la dirección IP local
+            InetAddress localhost = InetAddress.getLocalHost();
+            String ipAddress = localhost.getHostAddress();
+
+            System.out.println("Dirección IP: " + ipAddress);
+            TxtIP.setText(ipAddress);
+            hostcliente = ipAddress;
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void recibirMensajeCajero(String respuesta){
-        txtMensajeCliente.setText(respuesta);
+    public static void recibirMensajeVendedor(String respuesta) {
+        //txtMensajeCliente.append("\n" + respuesta);
     }
+
+    public static void recibirMensajeCajero(String respuesta) {
+        txtMensajeCliente.append("\n" + respuesta);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -64,6 +95,7 @@ public class VistaCliente extends javax.swing.JFrame {
         pro6 = new javax.swing.JButton();
         pro7 = new javax.swing.JButton();
         pro8 = new javax.swing.JButton();
+        TxtIP = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtMensajeCliente = new javax.swing.JTextArea();
         labelFondo = new javax.swing.JLabel();
@@ -190,6 +222,9 @@ public class VistaCliente extends javax.swing.JFrame {
             }
         });
         jPanel1.add(pro8, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 380, 150, 150));
+
+        TxtIP.setEditable(false);
+        jPanel1.add(TxtIP, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 140, 220, -1));
 
         txtMensajeCliente.setColumns(20);
         txtMensajeCliente.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
@@ -462,33 +497,51 @@ public class VistaCliente extends javax.swing.JFrame {
 
     private void pro1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro1ActionPerformed
         String producto = "Playera Tipo Polo Caballero";
-        VistaVendedor.recibirMensajeCliente(producto);
+        Cliente c = new Cliente("192.168.1.121", producto);
+        Thread t = new Thread(c);
+        t.start();
+        //VistaVendedor.recibirMensajeCliente(producto);
 
     }//GEN-LAST:event_pro1ActionPerformed
 
     private void pro2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro2ActionPerformed
         String producto = "Camisa Lisa Casual Caballero";
-        VistaVendedor.recibirMensajeCliente(producto);
+        Cliente c = new Cliente("192.168.1.121", producto);
+        Thread t = new Thread(c);
+        t.start();
+        //VistaVendedor.recibirMensajeCliente(producto);
     }//GEN-LAST:event_pro2ActionPerformed
 
     private void pro3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro3ActionPerformed
         String producto = "Playera Bordado HPC Caballero";
-        VistaVendedor.recibirMensajeCliente(producto);
+        Cliente c = new Cliente(hostcliente, producto);
+        Thread t = new Thread(c);
+        t.start();
+        //VistaVendedor.recibirMensajeCliente(producto);
     }//GEN-LAST:event_pro3ActionPerformed
 
     private void pro4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro4ActionPerformed
         String producto = "Playera Estampada Caballero";
-        VistaVendedor.recibirMensajeCliente(producto);
+        Cliente c = new Cliente(hostcliente, producto);
+        Thread t = new Thread(c);
+        t.start();
+        //VistaVendedor.recibirMensajeCliente(producto);
     }//GEN-LAST:event_pro4ActionPerformed
 
     private void pro5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro5ActionPerformed
         String producto = "Traje Corte Inglés Caballero";
-        VistaVendedor.recibirMensajeCliente(producto);
+        Cliente c = new Cliente(hostcliente, producto);
+        Thread t = new Thread(c);
+        t.start();
+        //VistaVendedor.recibirMensajeCliente(producto);
     }//GEN-LAST:event_pro5ActionPerformed
 
     private void pro6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro6ActionPerformed
         String producto = "Jogger Deportivo Caballero";
-        VistaVendedor.recibirMensajeCliente(producto);
+        Cliente c = new Cliente(hostcliente, producto);
+        Thread t = new Thread(c);
+        t.start();
+        //VistaVendedor.recibirMensajeCliente(producto);
     }//GEN-LAST:event_pro6ActionPerformed
 
     private void pro7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro7ActionPerformed
@@ -498,12 +551,18 @@ public class VistaCliente extends javax.swing.JFrame {
 
     private void pro8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro8ActionPerformed
         String producto = "Playera con Flores para dama";
-        VistaVendedor.recibirMensajeCliente(producto);
+        Cliente c = new Cliente(hostcliente, producto);
+        Thread t = new Thread(c);
+        t.start();
+        //VistaVendedor.recibirMensajeCliente(producto);
     }//GEN-LAST:event_pro8ActionPerformed
 
     private void pro9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pro9ActionPerformed
         String producto = "Falda Patinadora Dama";
-        VistaVendedor.recibirMensajeCliente(producto);
+        Cliente c = new Cliente(hostcliente, producto);
+        Thread t = new Thread(c);
+        t.start();
+        //VistaVendedor.recibirMensajeCliente(producto);
     }//GEN-LAST:event_pro9ActionPerformed
 
     /**
@@ -542,6 +601,7 @@ public class VistaCliente extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public static javax.swing.JTextField TxtIP;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelFondo;
@@ -557,4 +617,9 @@ public class VistaCliente extends javax.swing.JFrame {
     private javax.swing.JButton pro9;
     public static javax.swing.JTextArea txtMensajeCliente;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void update(Observable o, Object respuesta) {
+        this.txtMensajeCliente.append((String) "\n" + respuesta);
+    }
 }

@@ -1,5 +1,6 @@
 package agentes;
 
+import jade.core.AID;
 import view.VistaVendedor;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
@@ -16,14 +17,18 @@ public class AgenteVendedor extends Agent {
         vendedorView = new VistaVendedor(); // Pasar una referencia del agente a la vista
         vendedorView.setVisible(true);
     }
-
-    public void enviarMensaje() {
-
+    public void enviarMensajeACL(String contenido, AID receiver) {
+        ACLMessage mensaje = new ACLMessage(ACLMessage.INFORM);
+        mensaje.setContent(contenido);
+        mensaje.addReceiver(receiver);
+        send(mensaje);
     }
-
-    public void recibirMensaje() {
-       
-    }
-
     
+    public ACLMessage recibirMensajeACL() {
+        ACLMessage msg = blockingReceive();
+        if (msg != null) {
+            // Procesar el mensaje recibido
+        }
+        return msg;
+    }
 }
